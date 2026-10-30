@@ -54,5 +54,7 @@ def test_login_y_busqueda_solicitud(page: Page):
     # Hacer clic para ir al perfil
     enlace_alumno.click()
 
+    page.screenshot(path="perfil_alumno.png") #captura
+
     # Pausa haber si lo puedo ver el perfil
     page.wait_for_timeout(3000)
