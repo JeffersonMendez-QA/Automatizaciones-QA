@@ -2,7 +2,7 @@ import pytest
 from playwright.sync_api import Page, expect
 
 def test_login_y_busqueda_solicitud(page: Page):
-    # 1. Login
+    # Login
     page.goto("https://siu-qa.scalahed.info/usuarios/login/#")
     page.get_by_placeholder("Ingresa tu matrícula").fill("000585051")
     page.locator("#id_password").fill("@Jefferson7")
@@ -14,7 +14,7 @@ def test_login_y_busqueda_solicitud(page: Page):
     page.locator("#menuLateral").hover()
 
     #  Esperar a que la opción #item4 sea clickeable y hacer clic
-    item_solicitud = page.locator("#item4")
+    item_solicitud = page.locator("#item4")#mediante id es mejor
     item_solicitud.wait_for(state="visible")
     item_solicitud.click()
 
@@ -29,11 +29,30 @@ def test_login_y_busqueda_solicitud(page: Page):
     opcion_solicitud.click()
 
     # 3. Clic en Buscar Persona
-    """opcion_buscar = page.locator("span.buscarPersonaMenu").first
-    opcion_buscar.wait_for(state="visible")
-    opcion_buscar.click()"""
    
     # 4. Formulario de Búsqueda por Matrícula
+
+    input_matricula = page.locator("#id_matricula")
+    input_matricula.wait_for(state="visible")
     
-    page.locator("#id_matricula").fill("010785069")
+    # Enfocar y escribir carácter por carácter bien chimba
+    input_matricula.click()
+    input_matricula.clear()
+    input_matricula.press_sequentially("010785069", delay=100)
+
+    input_matricula.press("Enter")
+
+    # Si pasa la aserción previa, ahora sí presionamos buscar
     page.locator("#search_app").click()
+
+# Localizar el enlace <a> que dice "ALUMNO"
+    enlace_alumno = page.get_by_role("link", name="ALUMNO")
+    
+    # Validar que el enlace sea visible en la sección de resultados
+    expect(enlace_alumno).to_be_visible(timeout=10000)
+    
+    # Hacer clic para ir al perfil
+    enlace_alumno.click()
+
+    # Pausa haber si lo puedo ver el perfil
+    page.wait_for_timeout(3000)
